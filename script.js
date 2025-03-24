@@ -75,6 +75,16 @@ let points = 100;
 let previousFact = "";
 let sessionActive = true;
 let factCount = 0;
+let buttonsActive = true;
+
+// Constants
+const KINDNESS_FREQUENCY = 8;
+const KIDNESS_STATEMENT = "Your Outie is kind.";
+const FADE_DURATION = 1000;
+const FADE_DELAY = 3000;
+const BUTTON_DELAY = 1500;
+
+
 
 // DOM elements
 const factElement = document.getElementById("fact");
@@ -93,8 +103,8 @@ function displayFact() {
     let nextFact;
     
     // Every 4th fact is "Your Outie is kind."
-    if (factCount % 4 === 0) {
-        nextFact = "Your Outie is kind.";
+    if (factCount % KINDNESS_FREQUENCY === 0) {
+        nextFact = KIDNESS_STATEMENT;
     } else {
         // Choose random fact
         do {
@@ -117,18 +127,21 @@ function displayFact() {
         
         // Display next fact after 1 second delay
         if (sessionActive) {
-            setTimeout(displayFact, 1000);
+            setTimeout(displayFact, FADE_DURATION);
         }
-    }, 4000);
+    }, FADE_DELAY);
 }
 
 // Function to display a message
-function displayMessage(text, duration = 3000) {
+function displayMessage(text) {
+    if (!buttonsActive) return;
+    disableButtons();
     messageElement.textContent = text;
     
     setTimeout(() => {
         messageElement.textContent = "";
-    }, duration);
+        enableButtons();
+    }, BUTTON_DELAY);
 }
 
 // Function to handle speaking
@@ -139,7 +152,7 @@ function handleSpeak() {
     pointsElement.textContent = points;
     
     // Display speaking message
-    displayMessage("Speaking is prohibited and penalized by point deductions in increments of 10.", 3000);
+    displayMessage("Speaking is prohibited and penalized by point deductions in increments of 10.");
     
     // Check if session should end
     if (points <= 0) {
@@ -152,7 +165,7 @@ function handleVote() {
     if (!sessionActive) return;
     
     // Display voting message
-    displayMessage("Please try to enjoy all facts equally, showing no particular emotion to specific facts.", 3000);
+    displayMessage("Please try to enjoy all facts equally, showing no particular emotion to specific facts.");
 }
 
 // Function to handle sharing
@@ -160,17 +173,31 @@ function handleShare() {
     if (!sessionActive) return;
     
     // Display sharing message
-    displayMessage("Sharing the facts outside the wellness room is prohibited.", 3000);
+    displayMessage("Sharing the facts outside the wellness room is prohibited.");
+}
+
+
+function disableButtons() {
+    buttonsActive = false;
+    speakButton.disabled = true;
+    voteUpButton.disabled = true;
+    voteDownButton.disabled = true;
+    shareButton.disabled = true;
+}
+
+function enableButtons() {
+    buttonsActive = true;
+    speakButton.disabled = false;
+    voteUpButton.disabled = false;
+    voteDownButton.disabled = false;
+    shareButton.disabled = false;
 }
 
 // Function to end session
 function endSession() {
     sessionActive = false;
     sessionEndedElement.textContent = "Wellness session terminated.";
-    speakButton.disabled = true;
-    voteUpButton.disabled = true;
-    voteDownButton.disabled = true;
-    shareButton.disabled = true;
+    disableButtons();
 }
 
 // Event listeners

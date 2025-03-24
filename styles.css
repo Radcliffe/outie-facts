@@ -79,6 +79,12 @@ button {
     transition: background-color 0.3s;
 }
 
+button:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
+
 .vote-up, .vote-down, .speak, .share {
     background-color: #a3d9d0;
     color: #1a7a72;

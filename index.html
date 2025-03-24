@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellness Facts</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #e6f2f5;
+            color: #2c3e50;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f0f9f5;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .points-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1a7a72;
+        }
+        
+        .header {
+            color: #1a7a72;
+            margin-bottom: 30px;
+        }
+        
+        .counselor-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 20px auto;
+            border: 4px solid #a3d9d0;
+        }
+        
+        .fact-container {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .fact {
+            font-size: 22px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            color: #2c5e50;
+            font-weight: 500;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .vote-up {
+            background-color: #a3d9d0;
+            color: #1a7a72;
+        }
+        
+        .vote-down {
+            background-color: #a3d9d0;
+            color: #1a7a72;
+        }
+        
+        .speak {
+            background-color: #c3e6e1;
+            color: #1a7a72;
+        }
+        
+        .share {
+            background-color: #a3d9d0;
+            color: #1a7a72;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+        }
+        
+        .message-container {
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .message {
+            color: #e74c3c;
+            font-size: 18px;
+            text-align: center;
+            max-width: 80%;
+        }
+        
+        .session-ended {
+            font-size: 24px;
+            color: #e74c3c;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        
+        .lumon-logo {
+            width: 120px;
+            margin-top: 30px;
+            opacity: 0.6;
+        }
+        
+        /* Fluorescent light effect */
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.8), transparent);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="points-display">Points: <span id="points">100</span></div>
+        <h1 class="header">Wellness Session</h1>
+        
+        <img class="counselor-image" src="/miss_casey.jpg" alt="Miss Casey">
+        
+        <div class="fact-container">
+            <p id="fact" class="fact"></p>
+        </div>
+        
+        <div class="buttons">
+            <button class="vote-up" id="voteUp">Vote up</button>
+            <button class="speak" id="speak">Speak</button>
+            <button class="vote-down" id="voteDown">Vote down</button>
+            <button class="share" id="share">Share</button>
+        </div>
+        
+        <div class="message-container">
+            <p id="message" class="message"></p>
+        </div>
+        
+        <p id="session-ended" class="session-ended"></p>
+    </div>
+    
+    <img class="lumon-logo" src="/api/placeholder/120/60" alt="Lumon Industries">
+
+    <script>
+        // Facts array
+        const facts = [
+            "Your Outie loves the color blue.",
+            "Your Outie recently had a very pleasant meal with friends.",
+            "Your Outie enjoys taking long walks in the park.",
+            "Your Outie has been sleeping well.",
+            "Your Outie has been recognized for their hard work.",
+            "Your Outie has a preference for jazz music.",
+            "Your Outie has recently acquired a new plant.",
+            "Your Outie maintains a tidy living space.",
+            "Your Outie has a fondness for spicy food.",
+            "Your Outie is in good health.",
+            "Your Outie has been reading more lately.",
+            "Your Outie has been exercising regularly.",
+            "Your Outie is respected by their colleagues.",
+            "Your Outie enjoys watching documentaries.",
+            "Your Outie recently helped someone in need.",
+            "A photo of your Outie with a trophy was once in a newspaper.",
+            "Your Outie attends many dances and is popular among the other attendees.",
+            "Your Outie avoids obscenities around children and the old.",
+            "Your Outie can leap admirably but does not do so to show off.",
+            "Your Outie can make a house or apartment feel like a home.",
+            "Your Outie can parallel park in less than 20 seconds.",
+            "Your Outie can pick up an animal without injuring it.",
+            "Your Outie can roller-skate with grace.",
+            "Your Outie can set up a tent in under three minutes.",
+            "Your Outie dances like nobody is watching.",
+            "Your Outie does not give excessive or annoying thumbs-ups.",
+            "Your Outie does not make adults with visible orthodontia feel unwelcome or judged.",
+            "Your Outie enjoys giving hugs to the poor.",
+            "Your Outie gets along with barkeeps and service workers.",
+            "Your Outie gives food and money to the destitute.",
+            "Your Outie has been mistaken for a celebrity who is widely considered handsome.",
+            "Your Outie has both zaz and pep.",
+            "Your Outie has brightened people's days by merely smiling.",
+            "Your Outie has no fear of muggers or knaves.",
+            "Your Outie has survived multiple earthquakes and will survive more.",
+            "Your Outie is a friend to children and to the elderly and the insane.",
+            "Your Outie is a motorist.",
+            "Your Outie is admired by domesticated animals.",
+            "Your Outie is courteous to strangers without expectation of reward.",
+            "Your Outie is familiar with the myth of Hercules and derives great meaning from it.",
+            "Your Outie is fond of music and owns many records.",
+            "Your Outie is generous.",
+            "Your Outie is gentle.",
+            "Your Outie is honest to law enforcement workers.",
+            "Your Outie is resilient and will be alright.",
+            "Your Outie is skilled at kissing and lovemaking.",
+            "Your Outie is splendid and can swim gracefully and well.",
+            "Your Outie is strong and helped someone lift a heavy object.",
+            "Your Outie is the second tallest of his friend group.",
+            "Your Outie keeps an open mind and a generous heart.",
+            "Your Outie knows a beautiful rock from a plain one.",
+            "Your Outie laughs beautifully and well.",
+            "Your Outie likes films and owns a machine that can play them.",
+            "Your Outie likes the sound of radar.",
+            "Your Outie listens to music while shaving, but not while showering.",
+            "Your Outie makes pleasing noises.",
+            "Your Outie makes time for people even when they're slow and dawdling.",
+            "Your Outie once captured a butterfly.",
+            "Your Outie pays all of his gas and electric bills within three business days.",
+            "Your Outie prefers two scoops of ice cream in a serving, but they must be the same flavor.",
+            "Your Outie spells and punctuates his written sentences in the proper way.",
+            "Your Outie understands and accepts loss as a part of life.",
+            "Your Outie understands the difference between an insect and an arachnid.",
+            "Your Outie values water.",
+            "Your Outie waits patiently in lines.",
+            "Your Outie will ascend to Heaven upon his death if such a place exists.",
+            "Your Outie will not waste time in the restroom.",
+            "Your Outie won a game two weeks ago."
+        ];
+        
+        // Variables
+        let points = 100;
+        let previousFact = "";
+        let sessionActive = true;
+        let factCount = 0;
+        
+        // DOM elements
+        const factElement = document.getElementById("fact");
+        const pointsElement = document.getElementById("points");
+        const messageElement = document.getElementById("message");
+        const sessionEndedElement = document.getElementById("session-ended");
+        const speakButton = document.getElementById("speak");
+        const voteUpButton = document.getElementById("voteUp");
+        const voteDownButton = document.getElementById("voteDown");
+        const shareButton = document.getElementById("share");
+        
+        // Function to display a fact
+        function displayFact() {
+            if (!sessionActive) return;
+            
+            let nextFact;
+            
+            // Every 4th fact is "Your Outie is kind."
+            if (factCount % 4 === 0) {
+                nextFact = "Your Outie is kind.";
+            } else {
+                // Choose random fact
+                do {
+                    const factIndex = Math.floor(Math.random() * facts.length);
+                    nextFact = facts[factIndex];
+                } while (nextFact === previousFact);
+            }
+            
+            // Fade in
+            factElement.textContent = nextFact;
+            factElement.style.opacity = 1;
+            
+            // Store for comparison
+            previousFact = nextFact;
+            factCount++;
+            
+            // Fade out after 2 seconds
+            setTimeout(() => {
+                factElement.style.opacity = 0;
+                
+                // Display next fact after 1 second delay
+                if (sessionActive) {
+                    setTimeout(displayFact, 1000);
+                }
+            }, 2000);
+        }
+        
+        // Function to display a message
+        function displayMessage(text, duration = 3000) {
+            messageElement.textContent = text;
+            
+            setTimeout(() => {
+                messageElement.textContent = "";
+            }, duration);
+        }
+        
+        // Function to handle speaking
+        function handleSpeak() {
+            if (!sessionActive) return;
+            
+            points -= 10;
+            pointsElement.textContent = points;
+            
+            // Display speaking message
+            displayMessage("Speaking is prohibited and penalized by point deductions in increments of 10.", 3000);
+            
+            // Check if session should end
+            if (points <= 0) {
+                endSession();
+            }
+        }
+        
+        // Function to handle voting
+        function handleVote() {
+            if (!sessionActive) return;
+            
+            // Display voting message
+            displayMessage("Please try to enjoy all facts equally, showing no particular emotion to specific facts.", 3000);
+        }
+        
+        // Function to handle sharing
+        function handleShare() {
+            if (!sessionActive) return;
+            
+            // Display sharing message
+            displayMessage("Sharing the facts outside the wellness room is prohibited.", 3000);
+        }
+        
+        // Function to end session
+        function endSession() {
+            sessionActive = false;
+            sessionEndedElement.textContent = "Wellness session terminated.";
+            speakButton.disabled = true;
+            voteUpButton.disabled = true;
+            voteDownButton.disabled = true;
+            shareButton.disabled = true;
+        }
+        
+        // Event listeners
+        speakButton.addEventListener("click", handleSpeak);
+        voteUpButton.addEventListener("click", handleVote);
+        voteDownButton.addEventListener("click", handleVote);
+        shareButton.addEventListener("click", handleShare);
+        
+        // Start displaying facts
+        displayFact();
+    </script>
+</body>
+</html>

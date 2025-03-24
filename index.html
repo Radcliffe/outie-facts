@@ -291,7 +291,7 @@
             previousFact = nextFact;
             factCount++;
             
-            // Fade out after 2 seconds
+            // Fade out after 4 seconds
             setTimeout(() => {
                 factElement.style.opacity = 0;
                 
@@ -299,7 +299,7 @@
                 if (sessionActive) {
                     setTimeout(displayFact, 1000);
                 }
-            }, 2000);
+            }, 4000);
         }
         
         // Function to display a message
